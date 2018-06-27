@@ -103,7 +103,7 @@ class Markov:
 
     def manualChoice(self, max):
         while True:
-            choice = input("Enter your choice: ")
+            choice = input("Enter your choice: ").strip()
             try:
                 choice = int(choice)
             except:
