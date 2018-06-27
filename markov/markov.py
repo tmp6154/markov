@@ -109,9 +109,9 @@ class Markov:
             except:
                 print("Not an integer number, try again")
                 continue
-            if choice < 1 or choice > max:
+            if choice < 0 or choice > max:
                 print("Number out of range, please, use numbers in range"
-                      "[1-{0}]".format(max))
+                      "[0-{0}]".format(max))
                 continue
             break
         return choice-1
@@ -123,13 +123,19 @@ class Markov:
             self.recentData[state] = 0
         self.recentData[state] += 1
         if self.manual:
-            choices = []
-            for i in range(50):
-                choices.append(self._choose(self.data[state]))
-            choices = list(set(choices))
-            for i in range(len(choices)):
-                print("{0}: {1}".format(i+1, choices[i]))
-            return choices[self.manualChoice(len(choices))]
+            choice = 0
+            while True:
+                choices = []
+                for i in range(50):
+                    choices.append(self._choose(self.data[state]))
+                choices = list(set(choices))
+                print("0: <Generate choices again>")
+                for i in range(len(choices)):
+                    print("{0}: {1}".format(i+1, choices[i]))
+                choice = self.manualChoice(len(choices))
+                if choice >= 0:
+                    break
+            return choices[choice]
 
         else:
             return self._choose(self.data[state])
