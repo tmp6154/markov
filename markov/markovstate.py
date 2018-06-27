@@ -77,12 +77,14 @@ class MarkovState:
 
         return self.generator(chunks)
 
-    def train(self, n, stream, noparagraphs=False):
+    def train(self, n, stream, noparagraphs=False, lower=False, alnum=False):
         """Train a new markov chain, overwriting the existing one.
         """
 
         training_data = tokenise.Tokeniser(stream=stream,
-                                           noparagraphs=noparagraphs)
+                                           noparagraphs=noparagraphs,
+                                           lower=lower,
+                                           alnum=alnum)
 
         self.markov = markov.Markov(n)
         self.markov.train(training_data)

@@ -133,7 +133,8 @@ continue [<len>]"""
             print(e.value)
 
     # Loading and saving data
-    @arg_wrapper("train", "<n> [--noparagraphs] <path> ...", {"<n>": (int,)})
+    @arg_wrapper("train", "<n> [--noparagraphs] [--lower] [--alnum]"
+                 "<path> ...", {"<n>": (int,)})
     def do_train(self, args):
         """Train a generator on a corpus.
 
@@ -159,7 +160,9 @@ than a separate token.
 
         self.markov.train(args["<n>"],
                           charinput(paths),
-                          noparagraphs=args["--noparagraphs"])
+                          noparagraphs=args["--noparagraphs"],
+                          lower=args["--lower"],
+                          alnum=args["--alnum"])
 
     @arg_wrapper("load", "<file>")
     def do_load(self, args):

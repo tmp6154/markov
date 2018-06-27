@@ -5,9 +5,12 @@ class Tokeniser:
     """Flexible tokeniser for the Markov chain.
     """
 
-    def __init__(self, stream=None, noparagraphs=False):
+    def __init__(self, stream=None, noparagraphs=False, lower=False, \
+                 alnum=False):
         self.stream = sys.stdin if stream is None else stream
         self.noparagraphs = noparagraphs
+        self.lower = lower
+        self.alnum = alnum
 
     def __iter__(self):
         self.buffer = ''
@@ -45,9 +48,12 @@ class Tokeniser:
                         out = self.buffer + next_char
                         next_char = ''
 
-                elif not self.buffer.isspace() and next_char.isspace():
+                elif (not self.buffer.isspace() and next_char.isspace()) or \
+                     (self.alnum and (not self.buffer.isspace() and ( \
+                      self.buffer.isalnum() ^ next_char.isalnum()))):
                     # A word
                     out = self.buffer
+                    if self.lower: out = out.lower()
 
                 # If the next_char is a token, save it
                 if cout:
