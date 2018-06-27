@@ -78,12 +78,13 @@ prefix of length longer than the generator's n will be truncated.  """)
             print(e.value)
 
     @arg_wrapper("paragraphs",
-                 "<len> [--seed=<seed>] [--prob=<prob>] [--offset=<offset>] [--cln=<cln>] [--] [<prefix>...]",
+                 "<len> [--seed=<seed>] [--prob=<prob>] [--offset=<offset>] [--cln=<cln>] [--manual] [--] [<prefix>...]",
                  {"<len>": (int,),
                   "--seed": (int, None),
                   "--prob": (float, 0),
                   "--offset": (int, 0),
                   "--cln": (int, None),
+                  "--manual": (bool, False),
                   "<prefix>": (tuple, ('\n\n',))})
     def do_paragraphs(self, args):
         """Generate paragraphs of output. See 'help generators'."""
@@ -92,17 +93,19 @@ prefix of length longer than the generator's n will be truncated.  """)
             print(self.markov.generate(args["<len>"], args["--seed"],
                                        args["--prob"], args["--offset"],
                                        endchunkf=lambda t: t == '\n\n',
+                                       manual=args["--manual"],
                                        kill=1, prefix=args["<prefix>"]))
         except markovstate.MarkovStateError as e:
             print(e.value)
 
     @arg_wrapper("sentences",
-                 "<len> [--seed=<seed>] [--prob=<prob>] [--offset=<offset>] [--cln=<cln>] [--] [<prefix>...]",
+                 "<len> [--seed=<seed>] [--prob=<prob>] [--offset=<offset>] [--cln=<cln>] [--manual] [--] [<prefix>...]",
                  {"<len>": (int,),
                   "--seed": (int, None),
                   "--prob": (float, 0),
                   "--offset": (int, 0),
                   "--cln": (int, None),
+                  "--manual": (bool, False),
                   "<prefix>": (tuple, ())})
     def do_sentences(self, args):
         """Generate sentences of output. See 'help generators'."""
@@ -113,6 +116,7 @@ prefix of length longer than the generator's n will be truncated.  """)
                                        args["--prob"], args["--offset"],
                                        startf=sentence_token,
                                        endchunkf=sentence_token,
+                                       manual=args["--manual"],
                                        prefix=args["<prefix>"]))
         except markovstate.MarkovStateError as e:
             print(e.value)

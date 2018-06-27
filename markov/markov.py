@@ -14,6 +14,7 @@ class Markov:
         self.data = {}
         self.recentData = {}
         self.cln = n
+        self.manual = False
 
     def set_cln(self, cln):
         self.cln = cln if cln is not None and cln <= self.n else self.n
@@ -58,13 +59,17 @@ class Markov:
             print("Could not dump to file.")
             return False
 
-    def reset(self, seed, prob, prev, cln):
+    def reset(self, seed, prob, prev, cln, manual):
         self.seed = seed
         self.p = prob
         self.prev = prev
         self.set_cln(cln)
         self.cleanRecentData()
+        self.manual = manual
         random.seed(seed)
+
+    def setManual(self, manual=False):
+        self.manual = manual
 
     def __iter__(self):
         return self
@@ -96,13 +101,38 @@ class Markov:
     def cleanRecentData(self):
         self.recentData = {}
 
+    def manualChoice(self, max):
+        while True:
+            choice = input("Enter your choice: ")
+            try:
+                choice = int(choice)
+            except:
+                print("Not an integer number, try again")
+                continue
+            if choice < 1 or choice > max:
+                print("Number out of range, please, use numbers in range"
+                      "[1-{0}]".format(max))
+                continue
+            break
+        return choice-1
+
     def _selectToken(self, state=None):
         if state is None:
             state = self.prev
         if not state in self.recentData:
             self.recentData[state] = 0
         self.recentData[state] += 1
-        return self._choose(self.data[state])
+        if self.manual:
+            choices = []
+            for i in range(50):
+                choices.append(self._choose(self.data[state]))
+            choices = list(set(choices))
+            for i in range(len(choices)):
+                print("{0}: {1}".format(i+1, choices[i]))
+            return choices[self.manualChoice(len(choices))]
+
+        else:
+            return self._choose(self.data[state])
 
     def _choose(self, freqdict):
         total, choices = freqdict

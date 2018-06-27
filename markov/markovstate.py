@@ -19,7 +19,7 @@ class MarkovState:
 
     def generate(self, chunks, seed=None, prob=0, offset=0, cln=None,
                  startf=lambda t: True, endchunkf=lambda t: True,
-                 kill=0, prefix=()):
+                 kill=0, prefix=(), manual=False):
         """Generate some output, starting anew. Then save the state of the
            generator so it can be resumed later.
 
@@ -48,13 +48,13 @@ class MarkovState:
             print("Warning: truncating prefix")
             prefix = prefix[self.markov.n - 1:]
 
-        self.markov.reset(seed, prob, prefix, cln)
-        
+        self.markov.reset(seed, prob, prefix, cln, False)
+
         for i in range(offset):
             next(self.markov)
         while not startf(next(self.markov)):
             pass
-
+        self.markov.setManual(manual)
         def gen(n):
             out = []
             while n > 0:
